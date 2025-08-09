@@ -5,7 +5,17 @@
     [ring.util.response :as response]
     [voice-recordings.middleware :refer [middleware]]
     [hiccup.page :refer [include-js include-css html5]]
-    [config.core :refer [env]]))
+    [config.core :refer [env]]
+    [clojure.java.jdbc :as jdbc]))
+
+; TODO: Use environ????
+(def db-spec
+  {:dbtype   "postgresql"
+   :dbname   (System/getenv "POSTGRES_DB")
+   :user     (System/getenv "POSTGRES_USER")
+   :password (System/getenv "POSTGRES_PASSWORD")
+   :host     (System/getenv "PGHOST")
+   :port     (System/getenv "PGPORT")})
 
 (def mount-target
   [:div#app
@@ -36,7 +46,10 @@
 
 (defn api-handler [_request]
   (-> {:message "Hello from API"
-       :data [1 2 3 4 5]}
+       :data [1 2 3 4 5]
+       :description (-> (jdbc/query db-spec ["SELECT * from test"])
+                        first
+                        :description)}
       json/generate-string
       response/response
       (response/content-type "application/json")))

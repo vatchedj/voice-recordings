@@ -20,7 +20,8 @@
                  [pez/clerk "1.0.0"]
                  [venantius/accountant "0.2.5"
                   :exclusions [org.clojure/tools.reader]]
-                 [cheshire "5.11.0"]]
+                 [cheshire "5.11.0"]
+                 [org.clojure/java.jdbc "0.7.12"]]
 
   :jvm-opts ["-Xmx1G"]
   
