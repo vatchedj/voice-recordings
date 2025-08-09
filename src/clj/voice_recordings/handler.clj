@@ -1,9 +1,11 @@
 (ns voice-recordings.handler
   (:require
-   [reitit.ring :as reitit-ring]
-   [voice-recordings.middleware :refer [middleware]]
-   [hiccup.page :refer [include-js include-css html5]]
-   [config.core :refer [env]]))
+    [cheshire.core :as json]
+    [reitit.ring :as reitit-ring]
+    [ring.util.response :as response]
+    [voice-recordings.middleware :refer [middleware]]
+    [hiccup.page :refer [include-js include-css html5]]
+    [config.core :refer [env]]))
 
 (def mount-target
   [:div#app
@@ -32,10 +34,18 @@
    :headers {"Content-Type" "text/html"}
    :body (loading-page)})
 
+(defn api-handler [_request]
+  (-> {:message "Hello from API"
+       :data [1 2 3 4 5]}
+      json/generate-string
+      response/response
+      (response/content-type "application/json")))
+
 (def app
   (reitit-ring/ring-handler
    (reitit-ring/router
     [["/" {:get {:handler index-handler}}]
+     ["/api" {:get {:handler api-handler}}]
      ["/items"
       ["" {:get {:handler index-handler}}]
       ["/:item-id" {:get {:handler index-handler
