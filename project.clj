@@ -22,7 +22,8 @@
                   :exclusions [org.clojure/tools.reader]]
                  [cheshire "5.11.0"]
                  [org.clojure/java.jdbc "0.7.12"]
-                 [org.postgresql/postgresql "42.7.1"]]
+                 [org.postgresql/postgresql "42.7.1"]
+                 [cljs-http "0.1.48"]]
 
   :jvm-opts ["-Xmx1G"]
   
@@ -96,8 +97,7 @@
                                   [figwheel-sidecar "0.5.20"]
                                   [nrepl "0.9.0"]
                                   [thheller/shadow-cljs "2.16.7"]
-                                  [pjstadig/humane-test-output "0.11.0"]
-                                  [cljs-http "0.1.48"]]
+                                  [pjstadig/humane-test-output "0.11.0"]]
 
                    :source-paths ["env/dev/clj"]
                    :plugins [[lein-figwheel "0.5.20"]]
