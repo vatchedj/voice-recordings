@@ -11,11 +11,11 @@
 ; TODO: Use environ????
 (def db-spec
   {:dbtype   "postgresql"
-   :dbname   (System/getenv "POSTGRES_DB")
-   :user     (System/getenv "POSTGRES_USER")
-   :password (System/getenv "POSTGRES_PASSWORD")
-   :host     (System/getenv "PGHOST")
-   :port     (System/getenv "PGPORT")})
+   :dbname   (env :postgres-db)
+   :user     (env :postgres-user)
+   :password (env :postgres-password)
+   :host     (env :pghost)
+   :port     (env :pgport)})
 
 (def mount-target
   [:div#app
@@ -28,6 +28,7 @@
    [:meta {:charset "utf-8"}]
    [:meta {:name "viewport"
            :content "width=device-width, initial-scale=1"}]
+   (include-css (if (env :dev) "/css/foundation.css" "/css/foundation.min.css"))
    (include-css (if (env :dev) "/css/site.css" "/css/site.min.css"))])
 
 (defn loading-page []
@@ -46,12 +47,10 @@
 
 (defn api-handler [_request]
   (-> {:message "Hello from API"
-       :data [1 2 3 4 5]
-       :description (if-not (env :dev)
-                      (-> (jdbc/query db-spec ["SELECT * from test"])
-                          first
-                          :description)
-                      "Hardcoded description")}
+       :data    [1 2 3 4 5]
+       :url     (-> (jdbc/query db-spec ["SELECT * from recording"])
+                    first
+                    :url)}
       json/generate-string
       response/response
       (response/content-type "application/json")))

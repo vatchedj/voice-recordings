@@ -23,7 +23,10 @@
                  [cheshire "5.11.0"]
                  [org.clojure/java.jdbc "0.7.12"]
                  [org.postgresql/postgresql "42.7.1"]
-                 [cljs-http "0.1.48"]]
+
+                 ; ClojureScript
+                 [cljs-http "0.1.48"]
+                 ]
 
   :jvm-opts ["-Xmx1G"]
   
@@ -48,7 +51,9 @@
 
   :minify-assets
   [[:css {:source "resources/public/css/site.css"
-          :target "resources/public/css/site.min.css"}]]
+          :target "resources/public/css/site.min.css"}]
+   [:css {:source "resources/public/css/foundation.css"
+          :target "resources/public/css/foundation.min.css"}]]
 
   :cljsbuild
   {:builds {:min

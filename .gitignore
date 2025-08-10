@@ -17,3 +17,4 @@ pom.xml.asc
 /.shadow-cljs/
 /resources/public/js/
 .idea/
+.rebel_readline_history
