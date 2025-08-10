@@ -30,17 +30,26 @@
 ;; -------------------------
 ;; Page components
 
+(def home-data (reagent/atom nil))
+
+;; Separate the data fetching into its own function
+(defn fetch-home-data! []
+  (go (let [response (<! (http/get "/api"))]
+        (when (= 200 (:status response))
+          ;; Parse the JSON response body
+          (reset! home-data (js->clj (:body response) :keywordize-keys true))))))
+
 (defn home-page []
-  (let [data (reagent/atom nil)]
-    (go (let [response (<! (http/get "/api"))]
-          (reset! data (:body response))))
-    (fn []
-      [:span.main
-       [:h1 "Welcome to voice-recordings"]
-       [:p1 @data]
-       [:ul
-        [:li [:a {:href (path-for :items)} "Items of voice-recordings"]]
-        [:li [:a {:href "/broken/link"} "Broken link"]]]])))
+  (reagent/create-class
+    {:component-did-mount fetch-home-data!
+     :reagent-render
+     (fn []
+       [:span.main
+        [:h1 "Welcome to voice-recordings"]
+        [:p (str @home-data)]
+        [:ul
+         [:li [:a {:href (path-for :items)} "Items of voice-recordings"]]
+         [:li [:a {:href "/broken/link"} "Broken link"]]]])}))
 
 
 

@@ -47,9 +47,11 @@
 (defn api-handler [_request]
   (-> {:message "Hello from API"
        :data [1 2 3 4 5]
-       :description (-> (jdbc/query db-spec ["SELECT * from test"])
-                        first
-                        :description)}
+       :description (if-not (env :dev)
+                      (-> (jdbc/query db-spec ["SELECT * from test"])
+                          first
+                          :description)
+                      "Hardcoded description")}
       json/generate-string
       response/response
       (response/content-type "application/json")))
