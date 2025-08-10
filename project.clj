@@ -97,7 +97,7 @@
                                   [nrepl "0.9.0"]
                                   [thheller/shadow-cljs "2.16.7"]
                                   [pjstadig/humane-test-output "0.11.0"]
-                                  [cljs-http "0.1.46"]]
+                                  [cljs-http "0.1.48"]]
 
                    :source-paths ["env/dev/clj"]
                    :plugins [[lein-figwheel "0.5.20"]]
