@@ -1,11 +1,15 @@
 (ns voice-recordings.core
   (:require
+   [accountant.core :as accountant]
+   [clerk.core :as clerk]
+   [cljs-http.client :as http]
+   [cljs.core.async :refer [<!]]
    [reagent.core :as reagent :refer [atom]]
    [reagent.dom :as rdom]
    [reagent.session :as session]
-   [reitit.frontend :as reitit]
-   [clerk.core :as clerk]
-   [accountant.core :as accountant]))
+   [reitit.frontend :as reitit])
+  (:require-macros
+    [cljs.core.async.macros :refer [go]]))
 
 ;; -------------------------
 ;; Routes
@@ -27,12 +31,16 @@
 ;; Page components
 
 (defn home-page []
-  (fn []
-    [:span.main
-     [:h1 "Welcome to voice-recordings"]
-     [:ul
-      [:li [:a {:href (path-for :items)} "Items of voice-recordings"]]
-      [:li [:a {:href "/broken/link"} "Broken link"]]]]))
+  (let [data (reagent/atom nil)]
+    (go (let [response (<! (http/get "/api"))]
+          (reset! data (:body response))))
+    (fn []
+      [:span.main
+       [:h1 "Welcome to voice-recordings"]
+       [:p1 @data]
+       [:ul
+        [:li [:a {:href (path-for :items)} "Items of voice-recordings"]]
+        [:li [:a {:href "/broken/link"} "Broken link"]]]])))
 
 
 

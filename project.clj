@@ -97,12 +97,10 @@
                                   [nrepl "0.9.0"]
                                   [thheller/shadow-cljs "2.16.7"]
                                   [pjstadig/humane-test-output "0.11.0"]
-                                  
- ]
+                                  [cljs-http "0.1.46"]]
 
                    :source-paths ["env/dev/clj"]
-                   :plugins [[lein-figwheel "0.5.20"]
-]
+                   :plugins [[lein-figwheel "0.5.20"]]
 
                    :injections [(require 'pjstadig.humane-test-output)
                                 (pjstadig.humane-test-output/activate!)]
