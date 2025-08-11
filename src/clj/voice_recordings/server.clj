@@ -1,8 +1,8 @@
 (ns voice-recordings.server
     (:require
-     [voice-recordings.handler :refer [app]]
      [config.core :refer [env]]
-     [ring.adapter.jetty :refer [run-jetty]])
+     [ring.adapter.jetty :refer [run-jetty]]
+     [voice-recordings.handler :refer [app]])
     (:gen-class))
 
 (defn -main [& args]

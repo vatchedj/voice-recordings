@@ -11,6 +11,13 @@
   (:require-macros
     [cljs.core.async.macros :refer [go]]))
 
+
+(defn get-anti-forgery-token []
+  (-> js/document
+      (.getElementById "__anti-forgery-token")
+      (.getAttribute "data-token")))
+
+
 ;; -------------------------
 ;; Routes
 
@@ -20,7 +27,8 @@
     ["/items"
      ["" :items]
      ["/:item-id" :item]]
-    ["/about" :about]]))
+    ["/about" :about]
+    ["/initiate-call" :initiate-call]]))
 
 (defn path-for [route & [params]]
   (if params
@@ -30,14 +38,14 @@
 ;; -------------------------
 ;; Page components
 
-(def home-data (reagent/atom nil))
+(def home-data (atom nil))
 
 ;; Separate the data fetching into its own function
 (defn fetch-home-data! []
-  (go (let [response (<! (http/get "/api"))]
-        (when (= 200 (:status response))
-          ;; Parse the JSON response body
-          (reset! home-data (js->clj (:body response) :keywordize-keys true))))))
+  (go
+    (let [response (<! (http/get "/api"))]
+      (when (= 200 (:status response))
+        (reset! home-data (js->clj (:body response) :keywordize-keys true))))))
 
 (defn home-page []
   (reagent/create-class
@@ -49,6 +57,7 @@
         [:p (str @home-data)]
         [:ul
          [:li [:a {:href (path-for :items)} "Items of voice-recordings"]]
+         [:li [:a {:href (path-for :initiate-call)} "Initiate call"]]
          [:li [:a {:href "/broken/link"} "Broken link"]]]])}))
 
 
@@ -77,6 +86,42 @@
           [:h1 "About voice-recordings"]]))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Initiate call page
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def phone-number (atom ""))
+
+(defn initiate-call!
+  []
+  (println "phone-number" @phone-number)
+  (go
+    ; TODO: Extract the common parts of this post into a helper function
+    (let [response (<! (http/post
+                         "/api/initiate-call"
+                         {:json-params {:phone-number @phone-number}
+                          :headers     {"x-csrf-token" (get-anti-forgery-token)}}))]
+      (println "response" response)
+      (when (= 201 (:status response))
+        (println "initiate-call! response"
+                 (js->clj (:body response) :keywordize-keys true))))))
+
+(defn initiate-call-page []
+  (fn []
+    [:span.main
+     [:h1 "Call test page"]
+     [:label {:for "phone"} "Enter your phone number"]
+     [:input#phone {:type        "tel"
+                    :name        "phone"
+                    :value       @phone-number
+                    :pattern     "[0-9]{3}-[0-9]{2}-[0-9]{3}"
+                    :placeholder "123-456-7890"
+                    :required    true
+                    :on-change   #(reset! phone-number (.. % -target -value))}
+      ]
+     [:input {:type "button" :value "Call me now" :on-click initiate-call!}]]))
+
+
 ;; -------------------------
 ;; Translate routes -> page components
 
@@ -85,7 +130,8 @@
     :index #'home-page
     :about #'about-page
     :items #'items-page
-    :item #'item-page))
+    :item #'item-page
+    :initiate-call #'initiate-call-page))
 
 
 ;; -------------------------
@@ -120,8 +166,7 @@
         (reagent/after-render clerk/after-render!)
         (session/put! :route {:current-page (page-for current-page)
                               :route-params route-params})
-        (clerk/navigate-page! path)
-        ))
+        (clerk/navigate-page! path)))
     :path-exists?
     (fn [path]
       (boolean (reitit/match-by-path router path)))})

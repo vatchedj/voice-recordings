@@ -23,12 +23,14 @@
                  [cheshire "5.11.0"]
                  [org.clojure/java.jdbc "0.7.12"]
                  [org.postgresql/postgresql "42.7.1"]
+                 [com.twilio.sdk/twilio "11.0.0-rc.3"]
 
                  ; ClojureScript
                  [cljs-http "0.1.48"]
                  ]
 
-  :jvm-opts ["-Xmx1G"]
+  :jvm-opts ["-Xmx1G"
+             #_"-Dclojure.tools.logging.factory=clojure.tools.logging.impl/slf4j-factory"]
   
   :plugins [[lein-environ "1.1.0"]
             [lein-cljsbuild "1.1.7"]
@@ -75,12 +77,7 @@
               :output-dir "target/cljsbuild/public/js/out"
               :source-map true
               :optimizations :none
-              :pretty-print  true}}
-
-
-
-            }
-   }
+              :pretty-print  true}}}}
 
   :figwheel
   {:http-server-root "public"
@@ -90,7 +87,6 @@
                       ]
    :css-dirs ["resources/public/css"]
    :ring-handler voice-recordings.handler/app}
-
 
 
   :profiles {:dev {:repl-options {:init-ns voice-recordings.repl}

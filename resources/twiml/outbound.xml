@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Pause length="2"/>
+    <Say>
+        Hello, from Storyworth.
+        Please record your story at the tone.
+        When you are finished, press pound or hang up.
+        You'll be able to play back your story on the website.
+    </Say>
+    <Record timeout="10" finishOnKey="#" />
+</Response>
