@@ -25,12 +25,20 @@
                  [org.postgresql/postgresql "42.7.1"]
                  [com.twilio.sdk/twilio "11.0.0-rc.3"]
 
+                 ;; Add Clojure tools.logging
+                 [org.clojure/tools.logging "1.2.4"]
+
+                 ;; Add explicit SLF4J and Logback dependencies
+                 [org.slf4j/slf4j-api "1.7.36"]
+                 [ch.qos.logback/logback-classic "1.2.12"]
+
                  ; ClojureScript
                  [cljs-http "0.1.48"]
                  ]
 
   :jvm-opts ["-Xmx1G"
-             #_"-Dclojure.tools.logging.factory=clojure.tools.logging.impl/slf4j-factory"]
+             "-Dclojure.tools.logging.factory=clojure.tools.logging.impl/slf4j-factory"
+             "-Dlogback.configurationFile=logback.xml"]
   
   :plugins [[lein-environ "1.1.0"]
             [lein-cljsbuild "1.1.7"]

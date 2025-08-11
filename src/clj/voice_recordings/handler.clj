@@ -2,13 +2,15 @@
   (:require
     [cheshire.core :as json]
     [clojure.java.jdbc :as jdbc]
-    #_[clojure.tools.logging :as log]
+    [clojure.string :as string]
+    [clojure.tools.logging :as log]
     [config.core :refer [env]]
     [hiccup.page :refer [include-js include-css html5]]
     [reitit.ring :as reitit-ring]
     [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
     [ring.util.response :as response]
-    [voice-recordings.middleware :refer [middleware]]))
+    [voice-recordings.middleware :refer [middleware]]
+    [voice-recordings.twilio :as twilio]))
 
 ; TODO: Use environ????
 (def db-spec
@@ -18,6 +20,8 @@
    :password (env :postgres-password)
    :host     (env :pghost)
    :port     (env :pgport)})
+
+(log/info "TEST 1")
 
 (def mount-target
   [:div#app
@@ -51,7 +55,7 @@
 (defn api-handler [_request]
 
   (println "api-handler!!!!!!!!!!!!!")
-  #_(log/info "api-handler!!!!!!!!!!!!!")
+  (log/info "api-handler!!!!!!!!!!!!!")
 
   (-> {:message "Hello from API"
        :data    [1 2 3 4 5]
@@ -63,18 +67,20 @@
       (response/content-type "application/json")))
 
 (defn initiate-call-handler [request]
-  (println "request:" request)
+  (println "initiate-call-handler request (print):" request)
+  (log/debug "initiate-call-handler request (log):" request)
 
-  #_(log/info "request:" request)
+  (let [body (-> request :body slurp (json/parse-string true))
+        phone-number (:phone-number body)
+        sanitized-phone-number (as-> phone-number $
+                                     (string/replace $ #"\-" "")
+                                     (str "+1" $))]
+    (println "sanitized-phone-number" sanitized-phone-number)
 
-  ; Get phone number from request
-  ; Validate phone number?
-  ; Call twilio/make-call function
-  ; Return success response
+    (twilio/make-call sanitized-phone-number)
 
-  #_(response/created (json/generate-string request))
-  (response/created "RESPONSE!!!")
-  )
+    (response/created "RESPONSE!!!")
+    ))
 
 (def app
   (reitit-ring/ring-handler
