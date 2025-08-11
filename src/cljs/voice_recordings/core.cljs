@@ -57,7 +57,7 @@
         [:p (str @home-data)]
         [:ul
          [:li [:a {:href (path-for :items)} "Items of voice-recordings"]]
-         [:li [:a {:href (path-for :initiate-call)} "Initiate call"]]
+         #_[:li [:a {:href (path-for :initiate-call)} "Initiate call"]]
          [:li [:a {:href "/broken/link"} "Broken link"]]]])}))
 
 

@@ -1,6 +1,7 @@
 (ns voice-recordings.twilio
   (:require
     [clojure.java.io :as io]
+    [clojure.tools.logging :as log]
     [config.core :refer [env]])
   (:import
     (com.twilio Twilio)
@@ -18,6 +19,9 @@
   (let [twiml (-> "twiml/outbound.xml"
                   io/resource
                   slurp)
+        _ (log/info "twiml" twiml)
+        _ (log/info "to-phone-number" to-phone-number)
+        _ (log/info "from-phone-number" (env :twilio-phone-number))
         call (-> (Call/creator
                    (PhoneNumber. to-phone-number)
                    (PhoneNumber. (env :twilio-phone-number))
