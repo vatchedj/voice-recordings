@@ -7,5 +7,5 @@
         When you are finished, press pound or hang up.
         You'll be able to play back your story on the website.
     </Say>
-    <Record timeout="10" finishOnKey="#" />
+    <Record timeout="10" finishOnKey="#" recordingStatusCallback="https://voice-recordings.up.railway.app/api/recording-status-callback" />
 </Response>

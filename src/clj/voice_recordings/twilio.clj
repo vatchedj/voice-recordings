@@ -31,6 +31,6 @@
                    (PhoneNumber. to-phone-number)
                    (PhoneNumber. (env :twilio-phone-number))
                    (Twiml. twiml))
-                 (.setRecordingStatusCallback status-callback-url)
+                 #_(.setRecordingStatusCallback status-callback-url)
                  (.create))]
     call))
