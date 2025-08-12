@@ -11,6 +11,11 @@
 (def ^String account-sid (env :twilio-account-sid))
 (def ^String auth-token (env :twilio-auth-token))
 
+(def ^String status-callback-url
+  (if (env :production)
+    (str "http://" (env :railway-public-domain) "/api/recording-status-callback")
+    nil))
+
 (defn make-call
   "Initiates a call with recording.
   Returns the call's SID."
@@ -26,6 +31,6 @@
                    (PhoneNumber. to-phone-number)
                    (PhoneNumber. (env :twilio-phone-number))
                    (Twiml. twiml))
-                 (.setStatusCallback "/api/recording-status-callback")
+                 (.setStatusCallback status-callback-url)
                  (.create))]
     call))
