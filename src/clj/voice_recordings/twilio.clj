@@ -13,7 +13,7 @@
 
 (def ^String status-callback-url
   (if (env :production)
-    (str "http://" (env :railway-public-domain) "/api/recording-status-callback")
+    (str "https://" (env :railway-public-domain) "/api/recording-status-callback")
     nil))
 
 (defn make-call
