@@ -75,11 +75,11 @@
   [request]
   (println "update-recording-handler request (print):" request)
   (log/debug "update-recording-handler request (log):" request)
-  (let [body (-> request :body slurp (json/parse-string true))
-        _ (println "body" body)
-        call-sid (:CallSid body)
+  (let [params (-> request :params)
+        _ (println "params" params)
+        call-sid (:CallSid params)
         _ (println "call-sid" call-sid)
-        recording-url (:RecordingUrl body)
+        recording-url (:RecordingUrl params)
         _ (println "recording-url" recording-url)]
     (db/update-recording-by-call-sid!
       call-sid recording-url)
