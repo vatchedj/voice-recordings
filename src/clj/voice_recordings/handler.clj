@@ -1,25 +1,15 @@
 (ns voice-recordings.handler
   (:require
     [cheshire.core :as json]
-    [clojure.java.jdbc :as jdbc]
-    [clojure.string :as string]
     [clojure.tools.logging :as log]
     [config.core :refer [env]]
     [hiccup.page :refer [include-js include-css html5]]
     [reitit.ring :as reitit-ring]
     [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
     [ring.util.response :as response]
+    [voice-recordings.db :as db]
     [voice-recordings.middleware :refer [middleware]]
     [voice-recordings.twilio :as twilio]))
-
-; TODO: Use environ????
-(def db-spec
-  {:dbtype   "postgresql"
-   :dbname   (env :postgres-db)
-   :user     (env :postgres-user)
-   :password (env :postgres-password)
-   :host     (env :pghost)
-   :port     (env :pgport)})
 
 (log/info "TEST 1")
 
@@ -59,28 +49,41 @@
 
   (-> {:message "Hello from API"
        :data    [1 2 3 4 5]
-       :url     (-> (jdbc/query db-spec ["SELECT * from recording"])
+       :url     (-> (db/get-recordings!)
                     first
-                    :url)}
+                    :recording_url)}
       json/generate-string
       response/response
       (response/content-type "application/json")))
 
-(defn initiate-call-handler [request]
+(defn initiate-call-handler
+  [request]
   (println "initiate-call-handler request (print):" request)
   (log/debug "initiate-call-handler request (log):" request)
 
   (let [body (-> request :body slurp (json/parse-string true))
         phone-number (:phone-number body)
-        sanitized-phone-number (as-> phone-number $
-                                     (string/replace $ #"\-" "")
-                                     (str "+1" $))]
-    (println "sanitized-phone-number" sanitized-phone-number)
+        sanitized-phone-number (str "+1-" phone-number)
+        subject (db/create-or-get-subject! sanitized-phone-number)
+        call (twilio/make-call sanitized-phone-number)
+        call-sid (.getSid call)
+        recording (db/create-recording! (:id subject) call-sid)]
+    ; TODO: Return URL of recording?
+    (response/created "RESPONSE!!!")))
 
-    (twilio/make-call sanitized-phone-number)
-
-    (response/created "RESPONSE!!!")
-    ))
+(defn update-recording-handler
+  [request]
+  (println "update-recording-handler request (print):" request)
+  (log/debug "update-recording-handler request (log):" request)
+  (let [body (-> request :body slurp (json/parse-string true))
+        _ (println "body" body)
+        call-sid (:CallSid body)
+        _ (println "call-sid" call-sid)
+        recording-url (:RecordingUrl body)
+        _ (println "recording-url" recording-url)]
+    (db/update-recording-by-call-sid!
+      call-sid recording-url)
+    (response/status 200)))
 
 (def app
   (reitit-ring/ring-handler
@@ -88,7 +91,8 @@
     [["/" {:get {:handler index-handler}}]
      ["/api"
       ["" {:get {:handler api-handler}}]
-      ["/initiate-call" {:post {:handler initiate-call-handler}}]]
+      ["/initiate-call" {:post {:handler initiate-call-handler}}]
+      ["/recording-status-callback" {:post {:handler update-recording-handler}}]]
      ["/items"
       ["" {:get {:handler index-handler}}]
       ["/:item-id" {:get {:handler index-handler

@@ -26,5 +26,6 @@
                    (PhoneNumber. to-phone-number)
                    (PhoneNumber. (env :twilio-phone-number))
                    (Twiml. twiml))
+                 (.setStatusCallback "/api/recording-status-callback")
                  (.create))]
-    (.getSid call)))
+    call))
