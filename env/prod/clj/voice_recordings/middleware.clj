@@ -7,7 +7,11 @@
   "Returns nil for exception endpoints, to not enforce
   anti-forgery token. Otherwise, runs the default logic."
   [request]
-  (when-not (and (= (:request-method request) :patch)
+
+  (println "request-method:" (:request-method request)
+           "uri:" (:uri request))
+
+  (when-not (and (= (:request-method request) :post)
                  (= (:uri request) "/api/recording-status-callback"))
     (#'af/default-request-token request)))
 
