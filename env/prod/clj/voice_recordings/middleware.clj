@@ -1,6 +1,21 @@
 (ns voice-recordings.middleware
   (:require
-   [ring.middleware.defaults :refer [site-defaults wrap-defaults]]))
+    [ring.middleware.anti-forgery :as af]
+    [ring.middleware.defaults :refer [site-defaults wrap-defaults]]))
+
+(defn request-token-with-exemptions
+  "Returns nil for exception endpoints, to not enforce
+  anti-forgery token. Otherwise, runs the default logic."
+  [request]
+  (when-not (and (= (:request-method request) :patch)
+                 (= (:uri request) "/api/recording-status-callback"))
+    (#'af/default-request-token request)))
+
+(def options
+  (assoc-in
+    site-defaults
+    [:security :anti-forgery]
+    {:read-token request-token-with-exemptions}))
 
 (def middleware
-  [#(wrap-defaults % site-defaults)])
+  [#(wrap-defaults % options)])
