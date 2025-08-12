@@ -19,7 +19,8 @@
   (assoc-in
     site-defaults
     [:security :anti-forgery]
-    {:read-token request-token-with-exemptions}))
+    #_{:read-token request-token-with-exemptions}
+    false))
 
 (def middleware
   [#(wrap-defaults % options)])
