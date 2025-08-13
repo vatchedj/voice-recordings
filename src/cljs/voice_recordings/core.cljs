@@ -3,7 +3,7 @@
    [accountant.core :as accountant]
    [clerk.core :as clerk]
    [cljs-http.client :as http]
-   [cljs.core.async :refer [<!]]
+   [cljs.core.async :refer [<! timeout]]
    [reagent.core :as reagent :refer [atom]]
    [reagent.dom :as rdom]
    [reagent.session :as session]
@@ -92,26 +92,39 @@
 
 (def phone-number (atom ""))
 
+(defn check-recording-status! [recording-uuid]
+  (go
+    (let [response (<! (http/get (str "/api/recordings/" recording-uuid)))]
+      (when (= 200 (:status response))
+        (let [recording (js->clj (:body response) :keywordize-keys true)]
+          (when (:recording_url recording)
+            recording))))))
+
+(defn poll-recording-status! [recording-uuid]
+  (go
+    (loop [attempt 1
+           delay 1000]
+      (when (<= attempt 100)
+        (if-let [recording (<! (check-recording-status! recording-uuid))]
+          (accountant/navigate! (path-for :recording {:recording-uuid recording}))
+          (do
+            (<! (timeout delay))
+            (recur (inc attempt)
+                   (min 10000 (* delay 1.5)))))))))
+
 (defn initiate-call!
   []
   (println "phone-number" @phone-number)
   (go
-    ; TODO: Extract the common parts of this post into a helper function
     (let [response (<! (http/post
                          "/api/initiate-call"
                          {:json-params {:phone-number @phone-number}
                           :headers     {"x-csrf-token" (get-anti-forgery-token)}}))]
       (println "response" response)
       (when (= 201 (:status response))
-        (println "initiate-call! response"
-                 (js->clj (:body response) :keywordize-keys true))
-
-
-        ; TODO: Start looping and checking for the recording being ready
-        ;  - Get redirected once it's ready
-
-
-        ))))
+        (let [body (js->clj (:body response) :keywordize-keys true)
+              recording-uuid (:recording-uuid body)]
+          (poll-recording-status! recording-uuid))))))
 
 (defn initiate-call-page []
   (fn []
