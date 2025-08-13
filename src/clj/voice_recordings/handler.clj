@@ -90,14 +90,24 @@
         path-params (:path-params request)
         _ (println "path-params" path-params)
         recording-id (:recording-id path-params)
+        _ (println "recording-id" recording-id)
         #_#_recording-id (-> request :path-params :recording-id)
         recording-url (some-> recording-id
                               db/get-recording!
                               :recording_url)
         recording (twilio/get-recording! recording-url)
-        headers (:headers recording)]
-    (-> (:body recording)
+        headers (:headers recording)
+        _ (println "headers" headers)
+        body-bytes (:body recording)
+        content-length (get headers "content-length")]
+    (println "body type" (type body-bytes))
+    (-> body-bytes
         response/response
+        (response/header "Content-Length" content-length)
+        #_(response/header "Content-Disposition"
+                         (str "inline; filename=\"" filename "\""))
+        (response/header "Accept-Ranges" "bytes")
+        (response/header "Cache-Control" "no-cache")
         (response/content-type (:Content-Type headers)))))
 
 (def app
