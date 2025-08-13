@@ -153,7 +153,7 @@
           _ (println "routing-data" routing-data)
           recording-uuid (get-in routing-data [:route-params :recording-uuid])
           _ (println "recoding-uuid" recording-uuid)
-          recording-url (str "/api/recordings/" recording-uuid)]
+          recording-url (str "/api/recordings/" recording-uuid "/stream")]
       [:span.main
        [:h1 "Recording"]
        [:audio {:controls true}

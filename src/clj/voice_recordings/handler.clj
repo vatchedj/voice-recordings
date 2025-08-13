@@ -99,6 +99,21 @@
         _ (println "path-params" path-params)
         recording-uuid (:recording-uuid path-params)
         _ (println "recording-uuid" recording-uuid)
+        #_#_recording-uuid (-> request :path-params :recording-uuid)
+        recording (some-> recording-uuid
+                              db/get-recording!)]
+    (-> recording
+        json/generate-string
+        response/response
+        (response/content-type "application/json"))))
+
+(defn get-recording-stream-handler
+  [request]
+  (let [_ (println "request" request)
+        path-params (:path-params request)
+        _ (println "path-params" path-params)
+        recording-uuid (:recording-uuid path-params)
+        _ (println "recording-uuid" recording-uuid)
         #_#_recording-id (-> request :path-params :recording-id)
         recording-url (some-> recording-uuid
                               db/get-recording!
@@ -126,7 +141,8 @@
       ["" {:get {:handler api-handler}}]
       ["/initiate-call" {:post {:handler initiate-call-handler}}]
       ["/recording-status-callback" {:post {:handler update-recording-handler}}]
-      ["/recordings/:recording-uuid" {:get {:handler get-recording-handler}}]]
+      ["/recordings/:recording-uuid" {:get {:handler get-recording-handler}}]
+      ["/recordings/:recording-uuid/stream" {:get {:handler get-recording-stream-handler}}]]
      ["/items"
       ["" {:get {:handler index-handler}}]
       ["/:item-id" {:get {:handler index-handler
