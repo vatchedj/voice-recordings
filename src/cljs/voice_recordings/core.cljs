@@ -28,7 +28,8 @@
      ["" :items]
      ["/:item-id" :item]]
     ["/about" :about]
-    ["/initiate-call" :initiate-call]]))
+    ["/initiate-call" :initiate-call]
+    ["/recordings/:recording-id" :recording]]))
 
 (defn path-for [route & [params]]
   (if params
@@ -57,7 +58,6 @@
         [:p (str @home-data)]
         [:ul
          [:li [:a {:href (path-for :items)} "Items of voice-recordings"]]
-         #_[:li [:a {:href (path-for :initiate-call)} "Initiate call"]]
          [:li [:a {:href "/broken/link"} "Broken link"]]]])}))
 
 
@@ -117,10 +117,24 @@
                     :pattern     "[0-9]{3}-[0-9]{2}-[0-9]{3}"
                     :placeholder "123-456-7890"
                     :required    true
-                    :on-change   #(reset! phone-number (.. % -target -value))}
-      ]
+                    :on-change   #(reset! phone-number (.. % -target -value))}]
      [:input {:type "button" :value "Call me now" :on-click initiate-call!}]]))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Recording page
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn recording-page []
+  (fn []
+    (let [routing-data (session/get :route)
+          recording-id (get-in routing-data [:route-params :recording-id])
+          recording-url (str "/api/recordings/" recording-id)]
+      [:span.main
+       [:h1 "Recording"]
+       [:audio {:controls true}
+        [:source {:type "audio/x-wav" :src recording-url}]
+        "Your browser does not support the audio element."]])))
 
 ;; -------------------------
 ;; Translate routes -> page components
@@ -131,7 +145,8 @@
     :about #'about-page
     :items #'items-page
     :item #'item-page
-    :initiate-call #'initiate-call-page))
+    :initiate-call #'initiate-call-page
+    :recording #'recording-page))
 
 
 ;; -------------------------

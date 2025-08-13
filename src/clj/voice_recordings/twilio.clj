@@ -1,5 +1,6 @@
 (ns voice-recordings.twilio
   (:require
+    [clj-http.client :as http]
     [clojure.java.io :as io]
     [clojure.tools.logging :as log]
     [config.core :refer [env]])
@@ -16,7 +17,7 @@
     (str "https://" (env :railway-public-domain) "/api/recording-status-callback")
     nil))
 
-(defn make-call
+(defn make-call!
   "Initiates a call with recording.
   Returns the call's SID."
   [to-phone-number]
@@ -34,3 +35,10 @@
                  #_(.setRecordingStatusCallback status-callback-url)
                  (.create))]
     call))
+
+(defn get-recording!
+  "Gets and returns a recording from Twilio API using basic auth."
+  [recording-url]
+  (http/get recording-url
+            {:basic-auth [account-sid auth-token]
+             :as :stream}))

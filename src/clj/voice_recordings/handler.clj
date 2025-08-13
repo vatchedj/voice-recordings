@@ -60,12 +60,11 @@
   [request]
   (println "initiate-call-handler request (print):" request)
   (log/debug "initiate-call-handler request (log):" request)
-
   (let [body (-> request :body slurp (json/parse-string true))
         phone-number (:phone-number body)
         sanitized-phone-number (str "+1-" phone-number)
         subject (db/create-or-get-subject! sanitized-phone-number)
-        call (twilio/make-call sanitized-phone-number)
+        call (twilio/make-call! sanitized-phone-number)
         call-sid (.getSid call)
         recording (db/create-recording! (:id subject) call-sid)]
     ; TODO: Return URL of recording?
@@ -85,6 +84,18 @@
       call-sid recording-url)
     (response/status 200)))
 
+(defn get-recording-handler
+  [request]
+  (let [recording-id (-> request :path-params :recording-id)
+        recording-url (some-> recording-id
+                              db/get-recording!
+                              :recording_url)
+        recording (twilio/get-recording! recording-url)
+        headers (:headers recording)]
+    (-> (:body recording)
+        response/response
+        (response/content-type (:Content-Type headers)))))
+
 (def app
   (reitit-ring/ring-handler
    (reitit-ring/router
@@ -92,13 +103,15 @@
      ["/api"
       ["" {:get {:handler api-handler}}]
       ["/initiate-call" {:post {:handler initiate-call-handler}}]
-      ["/recording-status-callback" {:post {:handler update-recording-handler}}]]
+      ["/recording-status-callback" {:post {:handler update-recording-handler}}]
+      ["/recordings/:recording-id" {:get {:handler get-recording-handler}}]]
      ["/items"
       ["" {:get {:handler index-handler}}]
       ["/:item-id" {:get {:handler index-handler
                           :parameters {:path {:item-id int?}}}}]]
      ["/about" {:get {:handler index-handler}}]
-     ["/initiate-call" {:get {:handler index-handler}}]])
+     ["/initiate-call" {:get {:handler index-handler}}]
+     ["/recordings/:recording-id" {:get {:handler index-handler}}]])
    (reitit-ring/routes
     (reitit-ring/create-resource-handler {:path "/" :root "/public"})
     (reitit-ring/create-default-handler))

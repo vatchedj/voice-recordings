@@ -11,8 +11,15 @@
    :host     (env :pghost)
    :port     (env :pgport)})
 
+(defn get-recording!
+  [recording-id]
+  (-> (jdbc/query
+        db-spec
+        ["select * from recording where id = ?" recording-id])
+      first))
+
 (defn get-recordings! []
-  (jdbc/query db-spec ["SELECT * from recording"]))
+  (jdbc/query db-spec ["select * from recording"]))
 
 (defn create-or-get-subject!
   "Create a subject with the provided phone number

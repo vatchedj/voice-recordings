@@ -24,6 +24,7 @@
                  [org.clojure/java.jdbc "0.7.12"]
                  [org.postgresql/postgresql "42.7.1"]
                  [com.twilio.sdk/twilio "11.0.0-rc.3"]
+                 [clj-http "3.13.1"]
 
                  ;; Add Clojure tools.logging
                  [org.clojure/tools.logging "1.2.4"]
