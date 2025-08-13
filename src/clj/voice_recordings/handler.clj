@@ -60,7 +60,7 @@
   (let [scheme (if (env :dev) "http" "https")
         _ (println "env" env)
         host (env :host "localhost:3449")]
-    (str scheme "://" host "/recordings/" recording-uuid)))
+    (str scheme "://" host "/api/recordings/" recording-uuid)))
 
 (defn initiate-call-handler
   [request]
