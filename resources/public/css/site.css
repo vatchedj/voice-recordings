@@ -63,7 +63,7 @@ body {
 
 .main {
     /*padding: 5% 22% 0%;*/
-    margin: 5% 22% 0%;
+    margin: 5% 22% 5%;
 }
 
 img {
@@ -78,6 +78,11 @@ h1 {
     margin-bottom: 30px;
 }
 
+label {
+    font-size: 0.95rem;
+    color: #12473A;
+}
+
 input#phone {
     max-width: 20em;
     border-radius: 8px;
@@ -85,6 +90,9 @@ input#phone {
     padding: 8px 15px;
     box-shadow: none;
     margin-top: 5px;
+    margin-bottom: 25px;
+    color: #61706F;
+    border: 1px solid #9FB5AF;
 }
 
 input.call {
@@ -131,6 +139,7 @@ ol li {
     padding-right: 2em;
     padding-bottom: 15px;
     margin-bottom: 15px;
+    color: #042A21;
 }
 
 ol li:not(:last-child)::after {

@@ -145,9 +145,9 @@
      [:hr]
      [:h2 "How it works"]
      [:ol
-      [:li "Enter your phone number and Storyworth will call you to record \nyour story."]
-      [:li "During the call we’ll record your story over the phone. "]
-      [:li "After the call, an audio clip of your recording will be uploaded to your story where you can then request it to be transcribed. "]]]))
+      [:li "Enter your phone number and Storyworth will call you to record your story."]
+      [:li "During the call, we’ll record your story over the phone."]
+      [:li "After the call, an audio clip of your recording will be uploaded to your story where you can then request it to be transcribed."]]]))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
