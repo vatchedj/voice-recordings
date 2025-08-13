@@ -56,6 +56,12 @@
       response/response
       (response/content-type "application/json")))
 
+(defn recording-url [recording-uuid]
+  (let [scheme (if (env :dev) "http" "https")
+        _ (println "env" env)
+        host (env :host "localhost:3449")]
+    (str scheme "://" host "/recordings/" recording-uuid)))
+
 (defn initiate-call-handler
   [request]
   (println "initiate-call-handler request (print):" request)
@@ -67,7 +73,10 @@
         call (twilio/make-call! sanitized-phone-number)
         call-sid (.getSid call)
         recording (db/create-recording! (:id subject) call-sid)]
-    (response/created (str "/recordings/" (:uuid recording)))))
+    (-> recording
+        :uuid
+        recording-url
+        response/created)))
 
 (defn update-recording-handler
   [request]
