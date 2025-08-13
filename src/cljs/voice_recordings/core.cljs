@@ -29,7 +29,7 @@
      ["/:item-id" :item]]
     ["/about" :about]
     ["/initiate-call" :initiate-call]
-    ["/recordings/:recording-id" :recording]]))
+    ["/recordings/:recording-uuid" :recording]]))
 
 (defn path-for [route & [params]]
   (if params
@@ -104,7 +104,14 @@
       (println "response" response)
       (when (= 201 (:status response))
         (println "initiate-call! response"
-                 (js->clj (:body response) :keywordize-keys true))))))
+                 (js->clj (:body response) :keywordize-keys true))
+
+
+        ; TODO: Start looping and checking for the recording being ready
+        ;  - Get redirected once it's ready
+
+
+        ))))
 
 (defn initiate-call-page []
   (fn []
@@ -127,9 +134,12 @@
 
 (defn recording-page []
   (fn []
+    (println "TEST!!!")
     (let [routing-data (session/get :route)
-          recording-id (get-in routing-data [:route-params :recording-id])
-          recording-url (str "/api/recordings/" recording-id)]
+          _ (println "routing-data" routing-data)
+          recording-uuid (get-in routing-data [:route-params :recording-uuid])
+          _ (println "recoding-uuid" recording-uuid)
+          recording-url (str "/api/recordings/" recording-uuid)]
       [:span.main
        [:h1 "Recording"]
        [:audio {:controls true}

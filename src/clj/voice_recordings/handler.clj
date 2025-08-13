@@ -89,10 +89,10 @@
   (let [_ (println "request" request)
         path-params (:path-params request)
         _ (println "path-params" path-params)
-        recording-id (:recording-id path-params)
-        _ (println "recording-id" recording-id)
+        recording-uuid (:recording-uuid path-params)
+        _ (println "recording-uuid" recording-uuid)
         #_#_recording-id (-> request :path-params :recording-id)
-        recording-url (some-> recording-id
+        recording-url (some-> recording-uuid
                               db/get-recording!
                               :recording_url)
         recording (twilio/get-recording! recording-url)
@@ -118,14 +118,14 @@
       ["" {:get {:handler api-handler}}]
       ["/initiate-call" {:post {:handler initiate-call-handler}}]
       ["/recording-status-callback" {:post {:handler update-recording-handler}}]
-      ["/recordings/:recording-id" {:get {:handler get-recording-handler}}]]
+      ["/recordings/:recording-uuid" {:get {:handler get-recording-handler}}]]
      ["/items"
       ["" {:get {:handler index-handler}}]
       ["/:item-id" {:get {:handler index-handler
                           :parameters {:path {:item-id int?}}}}]]
      ["/about" {:get {:handler index-handler}}]
      ["/initiate-call" {:get {:handler index-handler}}]
-     ["/recordings/:recording-id" {:get {:handler index-handler}}]])
+     ["/recordings/:recording-uuid" {:get {:handler index-handler}}]])
    (reitit-ring/routes
     (reitit-ring/create-resource-handler {:path "/" :root "/public"})
     (reitit-ring/create-default-handler))

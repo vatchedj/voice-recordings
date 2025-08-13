@@ -12,10 +12,10 @@
    :port     (env :pgport)})
 
 (defn get-recording!
-  [recording-id]
+  [recording-uuid]
   (-> (jdbc/query
         db-spec
-        ["select * from recording where id = ?" recording-id])
+        ["select * from recording where uuid = ?::uuid" recording-uuid])
       first))
 
 (defn get-recordings! []
