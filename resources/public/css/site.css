@@ -1,3 +1,4 @@
+/*
 .body-container {
   font-family: 'Helvetica Neue', Verdana, Helvetica, Arial, sans-serif;
   max-width: 640px;
@@ -32,3 +33,123 @@ a {
 a:hover {
   text-decoration: underline;
 }
+*/
+
+@font-face {
+    font-family: 'Lora-Regular';
+    src: url('/font/Lora/Lora-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Lora-Medium';
+    src: url('/font/Lora/Lora-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Lora-SemiBold';
+    src: url('/font/Lora/Lora-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+
+body {
+    font-family: 'Lora-Regular';
+}
+
+.main {
+    /*padding: 5% 22% 0%;*/
+    margin: 5% 22% 0%;
+}
+
+img {
+  max-width: 200px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+h1 {
+    font-family: "Lora-Medium";
+    margin-bottom: 30px;
+}
+
+input#phone {
+    max-width: 20em;
+    border-radius: 8px;
+    min-height: 3em;
+    padding: 8px 15px;
+    box-shadow: none;
+    margin-top: 5px;
+}
+
+input.call {
+    background: #07949D;
+    border: none;
+    border-radius: 30px;
+    font-family: Helvetica Neue;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    text-align: center;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    padding: 13px 25px;
+    cursor: pointer;
+}
+
+hr {
+    width: 95%;
+    color: #cccece;
+    margin: 40px auto;
+}
+
+h2 {
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+ol {
+    list-style: none;
+    counter-reset: custom-counter;
+    margin: 0;
+}
+
+ol li {
+    counter-increment: custom-counter;
+    font-size: 24px;
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    padding-right: 2em;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+ol li:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    height: 1px;
+    background-color: #cccece;
+}
+
+ol li::before {
+  content: counter(custom-counter, decimal-leading-zero);
+  /*position: relative;*/
+  /*left: 0;*/
+  margin-right: 30px;
+  font-family: "Lora-SemiBold";
+  flex-shrink: 0;
+}
+
