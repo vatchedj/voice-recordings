@@ -67,8 +67,7 @@
         call (twilio/make-call! sanitized-phone-number)
         call-sid (.getSid call)
         recording (db/create-recording! (:id subject) call-sid)]
-    ; TODO: Return URL of recording?
-    (response/created "RESPONSE!!!")))
+    (response/created (str "/recordings/" (:uuid recording)))))
 
 (defn update-recording-handler
   [request]

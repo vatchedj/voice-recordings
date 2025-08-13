@@ -92,20 +92,20 @@
 
 (def phone-number (atom ""))
 
-(defn check-recording-status! [recording-uuid]
+(defn check-recording-status! [recording-url]
   (go
-    (let [response (<! (http/get (str "/api/recordings/" recording-uuid)))]
+    (let [response (<! (http/get recording-url))]
       (when (= 200 (:status response))
         (let [recording (js->clj (:body response) :keywordize-keys true)]
           (when (:recording_url recording)
             recording))))))
 
-(defn poll-recording-status! [recording-uuid]
+(defn poll-recording-status! [recording-url]
   (go
     (loop [attempt 1
            delay 1000]
       (when (<= attempt 100)
-        (if-let [recording (<! (check-recording-status! recording-uuid))]
+        (if-let [recording (<! (check-recording-status! recording-url))]
           (accountant/navigate! (path-for :recording {:recording-uuid recording}))
           (do
             (<! (timeout delay))
@@ -120,11 +120,12 @@
                          "/api/initiate-call"
                          {:json-params {:phone-number @phone-number}
                           :headers     {"x-csrf-token" (get-anti-forgery-token)}}))]
-      (println "response" response)
+      (println "response to /api/initiate-call" response)
       (when (= 201 (:status response))
-        (let [body (js->clj (:body response) :keywordize-keys true)
-              recording-uuid (:recording-uuid body)]
-          (poll-recording-status! recording-uuid))))))
+        (println "headers" (:headers response))
+        (let [recording-url (get-in response [:headers "location"])
+              _ (println "recording-url" recording-url)]
+          (poll-recording-status! recording-url))))))
 
 (defn initiate-call-page []
   (fn []
