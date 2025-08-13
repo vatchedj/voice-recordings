@@ -106,7 +106,8 @@
            delay 1000]
       (when (<= attempt 100)
         (if-let [recording (<! (check-recording-status! recording-url))]
-          (accountant/navigate! (path-for :recording {:recording-uuid recording}))
+          (accountant/navigate!
+            (path-for :recording {:recording-uuid (:uuid recording)}))
           (do
             (<! (timeout delay))
             (recur (inc attempt)
