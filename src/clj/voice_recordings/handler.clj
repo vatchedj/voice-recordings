@@ -86,7 +86,11 @@
 
 (defn get-recording-handler
   [request]
-  (let [recording-id (-> request :path-params :recording-id)
+  (let [_ (println "request" request)
+        path-params (:path-params request)
+        _ (println "path-params" path-params)
+        recording-id (:recording-id path-params)
+        #_#_recording-id (-> request :path-params :recording-id)
         recording-url (some-> recording-id
                               db/get-recording!
                               :recording_url)
