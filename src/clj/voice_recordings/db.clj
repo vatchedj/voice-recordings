@@ -18,9 +18,6 @@
         ["select * from recording where uuid = ?::uuid" recording-uuid])
       first))
 
-(defn get-recordings! []
-  (jdbc/query db-spec ["select * from recording"]))
-
 (defn create-or-get-subject!
   "Create a subject with the provided phone number
   and returns the record.
