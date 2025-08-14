@@ -36,6 +36,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def phone-number (atom ""))
+(def call-button-disabled? (atom false))
 
 (defn check-recording-status! [recording-url]
   (go
@@ -58,19 +59,15 @@
             (recur (inc attempt)
                    (min 10000 (* delay 1.5)))))))))
 
-(defn initiate-call!
-  []
-  (println "phone-number" @phone-number)
+(defn initiate-call! []
   (go
+    (reset! call-button-disabled? true)
     (let [response (<! (http/post
                          "/api/initiate-call"
                          {:json-params {:phone-number @phone-number}
                           :headers     {"x-csrf-token" (get-anti-forgery-token)}}))]
-      (println "response to /api/initiate-call" response)
       (when (= 201 (:status response))
-        (println "headers" (:headers response))
-        (let [recording-url (get-in response [:headers "location"])
-              _ (println "recording-url" recording-url)]
+        (let [recording-url (get-in response [:headers "location"])]
           (poll-recording-status! recording-url))))))
 
 (defn initiate-call-page []
@@ -86,7 +83,11 @@
                     :placeholder "123-456-7890"
                     :required    true
                     :on-change   #(reset! phone-number (.. % -target -value))}]
-     [:input.call {:type "button" :value "Call me now" :on-click initiate-call!}]
+     [:input.call
+      {:type     "button"
+       :value    "Call me now"
+       :on-click initiate-call!
+       :disabled @call-button-disabled?}]
      [:hr]
      [:h2 "How it works"]
      [:ol
@@ -168,7 +169,6 @@
          [:div.main
           [:img {:src "/img/typing.png"}]
           [:h1 "Listen to your recording and transcribe it."]
-          #_[:h2 "Wednesday, August 13th, 2025 2:45PM"]
           [:h2 @recording-date-time]
           [:audio {:controls true}
            [:source {:type "audio/x-wav" :src recording-url}]
