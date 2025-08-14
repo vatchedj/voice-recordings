@@ -58,6 +58,11 @@ input#phone {
     border: 1px solid #9FB5AF;
 }
 
+.invalid {
+  border-color: #ff0000;
+  background-color: #ffeeee;
+}
+
 input[type="button"] {
     background: #07949D;
     border: none;
