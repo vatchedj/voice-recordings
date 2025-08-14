@@ -101,7 +101,9 @@
         _ (println "recording-uuid" recording-uuid)
         #_#_recording-uuid (-> request :path-params :recording-uuid)
         recording (some-> recording-uuid
-                              db/get-recording!)]
+                          str
+                          db/get-recording!)]
+    (println "recording" recording)
     (-> recording
         json/generate-string
         response/response

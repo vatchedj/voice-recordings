@@ -70,10 +70,11 @@ img {
   max-width: 200px;
   height: auto;
   display: block;
-  margin: 0 auto;
+  margin: 0 auto 20px;
 }
 
 h1 {
+    font-size: 2.5rem;
     font-family: "Lora-Medium";
     margin-bottom: 30px;
 }
@@ -95,7 +96,7 @@ input#phone {
     border: 1px solid #9FB5AF;
 }
 
-input.call {
+input[type="button"] {
     background: #07949D;
     border: none;
     border-radius: 30px;
@@ -109,6 +110,13 @@ input.call {
     color: #FFFFFF;
     padding: 13px 25px;
     cursor: pointer;
+}
+
+input[type="button"]:disabled {
+    background: #cccece;
+    color: #888;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 hr {
@@ -160,5 +168,10 @@ ol li::before {
   margin-right: 30px;
   font-family: "Lora-SemiBold";
   flex-shrink: 0;
+}
+
+audio {
+    width: 100%;
+    margin: 0 0 2em;
 }
 
