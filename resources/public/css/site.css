@@ -1,40 +1,3 @@
-/*
-.body-container {
-  font-family: 'Helvetica Neue', Verdana, Helvetica, Arial, sans-serif;
-  max-width: 640px;
-  margin: 0 auto;
-  padding-top: 72px;
-  -webkit-font-smoothing: antialiased;
-  font-size: 1.125em;
-  color: #333;
-  line-height: 1.5em;
-}
-
-h1, h2, h3 {
-  color: #000;
-}
-h1 {
-  font-size: 2.5em
-}
-
-h2 {
-  font-size: 2em
-}
-
-h3 {
-  font-size: 1.5em
-}
-
-a {
-  text-decoration: none;
-  color: #09f;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-*/
-
 @font-face {
     font-family: 'Lora-Regular';
     src: url('/font/Lora/Lora-Regular.ttf') format('truetype');
@@ -56,14 +19,13 @@ a:hover {
     font-style: normal;
 }
 
-
 body {
     font-family: 'Lora-Regular';
 }
 
 .main {
-    /*padding: 5% 22% 0%;*/
-    margin: 5% 22% 5%;
+    margin: 5% 25% 5%;
+    max-width: 800px;
 }
 
 img {
@@ -74,13 +36,13 @@ img {
 }
 
 h1 {
-    font-size: 2.5rem;
+    font-size: 2.3rem;
     font-family: "Lora-Medium";
     margin-bottom: 30px;
 }
 
 label {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: #12473A;
 }
 
@@ -140,7 +102,7 @@ ol {
 
 ol li {
     counter-increment: custom-counter;
-    font-size: 24px;
+    font-size: 20px;
     display: flex;
     align-items: flex-start;
     position: relative;
@@ -163,8 +125,6 @@ ol li:not(:last-child)::after {
 
 ol li::before {
   content: counter(custom-counter, decimal-leading-zero);
-  /*position: relative;*/
-  /*left: 0;*/
   margin-right: 30px;
   font-family: "Lora-SemiBold";
   flex-shrink: 0;
@@ -174,4 +134,3 @@ audio {
     width: 100%;
     margin: 0 0 2em;
 }
-
