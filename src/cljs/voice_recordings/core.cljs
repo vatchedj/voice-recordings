@@ -7,7 +7,8 @@
    [reagent.core :as reagent :refer [atom]]
    [reagent.dom :as rdom]
    [reagent.session :as session]
-   [reitit.frontend :as reitit])
+   [reitit.frontend :as reitit]
+   [voice-recordings.util :as util])
   (:require-macros
     [cljs.core.async.macros :refer [go]]))
 
@@ -36,6 +37,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def phone-number (atom ""))
+(def phone-valid? (atom true))
 (def call-button-disabled? (atom false))
 
 (defn check-recording-status! [recording-url]
@@ -60,15 +62,19 @@
                    (min 10000 (* delay 1.5)))))))))
 
 (defn initiate-call! []
-  (go
-    (reset! call-button-disabled? true)
-    (let [response (<! (http/post
-                         "/api/initiate-call"
-                         {:json-params {:phone-number @phone-number}
-                          :headers     {"x-csrf-token" (get-anti-forgery-token)}}))]
-      (when (= 201 (:status response))
-        (let [recording-url (get-in response [:headers "location"])]
-          (poll-recording-status! recording-url))))))
+  (if-let [valid-phone (util/valid-phone-number @phone-number)]
+    (go
+      (reset! call-button-disabled? true)
+      (reset! phone-valid? true)
+      (let [response (<! (http/post
+                           "/api/initiate-call"
+                           {:json-params {:phone-number valid-phone}
+                            :headers     {"x-csrf-token" (get-anti-forgery-token)}}))]
+        (if (= 201 (:status response))
+          (let [recording-url (get-in response [:headers "location"])]
+            (poll-recording-status! recording-url))
+          (reset! call-button-disabled? false))))
+    (reset! phone-valid? false)))
 
 (defn initiate-call-page []
   (fn []
@@ -79,9 +85,10 @@
      [:input#phone {:type        "tel"
                     :name        "phone"
                     :value       @phone-number
-                    :pattern     "[0-9]{3}-[0-9]{2}-[0-9]{3}"
+                    :pattern     "[0-9]{3}-[0-9]{3}-[0-9]{4}"
                     :placeholder "123-456-7890"
                     :required    true
+                    :class       (when-not @phone-valid? "invalid")
                     :on-change   #(reset! phone-number (.. % -target -value))}]
      [:input.call
       {:type     "button"

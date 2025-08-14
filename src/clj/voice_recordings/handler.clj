@@ -9,7 +9,8 @@
     [ring.util.response :as response]
     [voice-recordings.db :as db]
     [voice-recordings.middleware :refer [middleware]]
-    [voice-recordings.twilio :as twilio]))
+    [voice-recordings.twilio :as twilio]
+    [voice-recordings.util :as util]))
 
 (def mount-target
   [:div#app
@@ -29,7 +30,7 @@
   (html5
    (head)
    [:body {:class "body-container"}
-    [:div#__anti-forgery-token {:data-token *anti-forgery-token*}] ; Add this line
+    [:div#__anti-forgery-token {:data-token *anti-forgery-token*}]
     mount-target
     (include-js "/js/app.js")]))
 
@@ -47,16 +48,20 @@
 (defn initiate-call-handler
   [request]
   (let [body (-> request :body slurp (json/parse-string true))
-        phone-number (:phone-number body)
-        sanitized-phone-number (str "+1-" phone-number)
-        subject (db/create-or-get-subject! sanitized-phone-number)
-        call (twilio/make-call! sanitized-phone-number)
-        call-sid (.getSid call)
-        recording (db/create-recording! (:id subject) call-sid)]
-    (-> recording
-        :uuid
-        recording-url
-        response/created)))
+        phone-number (:phone-number body)]
+    (if-let [valid-phone (util/valid-phone-number phone-number)]
+      (let [intl-phone-number (str "+1-" valid-phone)
+            subject (db/create-or-get-subject! intl-phone-number)
+            call (twilio/make-call! intl-phone-number)
+            call-sid (.getSid call)
+            recording (db/create-recording! (:id subject) call-sid)]
+        (-> recording
+            :uuid
+            recording-url
+            response/created))
+      {:status  400
+       :headers {}
+       :body    {:error "Invalid phone number"}})))
 
 (defn update-recording-handler
   [request]
@@ -83,7 +88,6 @@
   [request]
   (let [path-params (:path-params request)
         recording-uuid (:recording-uuid path-params)
-        #_#_recording-id (-> request :path-params :recording-id)
         recording-url (some-> recording-uuid
                               db/get-recording!
                               :recording_url)
