@@ -50,7 +50,7 @@
   (let [body (-> request :body slurp (json/parse-string true))
         phone-number (:phone-number body)]
     (if-let [valid-phone (util/valid-phone-number phone-number)]
-      (let [intl-phone-number (str "+1-" valid-phone)
+      (let [intl-phone-number (str "+1" valid-phone)
             subject (db/create-or-get-subject! intl-phone-number)
             call (twilio/make-call! intl-phone-number)
             call-sid (.getSid call)

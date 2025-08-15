@@ -76,6 +76,11 @@
           (reset! call-button-disabled? false))))
     (reset! phone-valid? false)))
 
+(defn- validate-phone-number! []
+  (->> @phone-number
+       util/is-valid-phone-number?
+       (reset! phone-valid?)))
+
 (defn initiate-call-page []
   (fn []
     [:div.main
@@ -89,7 +94,8 @@
                     :placeholder "123-456-7890"
                     :required    true
                     :class       (when-not @phone-valid? "invalid")
-                    :on-change   #(reset! phone-number (.. % -target -value))}]
+                    :on-change   #(reset! phone-number (.. % -target -value))
+                    :on-blur     validate-phone-number!}]
      [:input.call
       {:type     "button"
        :value    "Call me now"
