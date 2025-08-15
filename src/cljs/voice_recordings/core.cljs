@@ -4,6 +4,7 @@
    [clerk.core :as clerk]
    [cljs-http.client :as http]
    [cljs.core.async :refer [<! timeout]]
+   [clojure.string :as string]
    [reagent.core :as reagent :refer [atom]]
    [reagent.dom :as rdom]
    [reagent.session :as session]
@@ -76,10 +77,11 @@
           (reset! call-button-disabled? false))))
     (reset! phone-valid? false)))
 
-(defn- validate-phone-number! []
-  (->> @phone-number
-       util/is-valid-phone-number?
-       (reset! phone-valid?)))
+(defn- phone-number-on-blur []
+  (if (or (util/is-valid-phone-number? @phone-number)
+          (empty? @phone-number))
+    (reset! phone-valid? true)
+    (reset! phone-valid? false)))
 
 (defn initiate-call-page []
   (fn []
@@ -95,7 +97,7 @@
                     :required    true
                     :class       (when-not @phone-valid? "invalid")
                     :on-change   #(reset! phone-number (.. % -target -value))
-                    :on-blur     validate-phone-number!}]
+                    :on-blur     phone-number-on-blur}]
      [:input.call
       {:type     "button"
        :value    "Call me now"
