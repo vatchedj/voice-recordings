@@ -4,7 +4,7 @@
 
 (def router
   (reitit/router
-    [["/initiate-call" :initiate-call]
+    [["/" :initiate-call]
      ["/recordings/:recording-uuid" :recording]]))
 
 (defn path-for [route & [params]]

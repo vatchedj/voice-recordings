@@ -108,13 +108,12 @@
   (reitit-ring/ring-handler
    (reitit-ring/router
     [["/" {:get {:handler index-handler}}]
+     ["/recordings/:recording-uuid" {:get {:handler index-handler}}]
      ["/api"
       ["/initiate-call" {:post {:handler initiate-call-handler}}]
       ["/recording-status-callback" {:post {:handler update-recording-handler}}]
       ["/recordings/:recording-uuid" {:get {:handler get-recording-handler}}]
-      ["/recordings/:recording-uuid/stream" {:get {:handler get-recording-stream-handler}}]]
-     ["/initiate-call" {:get {:handler index-handler}}]
-     ["/recordings/:recording-uuid" {:get {:handler index-handler}}]])
+      ["/recordings/:recording-uuid/stream" {:get {:handler get-recording-stream-handler}}]]])
    (reitit-ring/routes
     (reitit-ring/create-resource-handler {:path "/" :root "/public"})
     (reitit-ring/create-default-handler))
