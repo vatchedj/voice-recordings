@@ -28,6 +28,21 @@ body {
     max-width: 800px;
 }
 
+/* Mobile-first responsive design */
+@media (max-width: 768px) {
+    .main {
+        margin: 3% 5% 5%;
+        padding: 0 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main {
+        margin: 2% 3% 3%;
+        padding: 0 10px;
+    }
+}
+
 img {
   max-width: 200px;
   height: auto;
@@ -35,10 +50,32 @@ img {
   margin: 0 auto 20px;
 }
 
+@media (max-width: 480px) {
+    img {
+        max-width: 150px;
+        margin: 0 auto 15px;
+    }
+}
+
 h1 {
     font-size: 2.3rem;
     font-family: "Lora-Medium";
     margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 25px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        text-align: center;
+    }
 }
 
 label {
@@ -56,6 +93,13 @@ input#phone {
     margin-bottom: 25px;
     color: #61706F;
     border: 1px solid #9FB5AF;
+}
+
+@media (max-width: 480px) {
+    input#phone {
+        max-width: none;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
 }
 
 .invalid {
@@ -79,6 +123,15 @@ input[type="button"] {
     cursor: pointer;
 }
 
+@media (max-width: 480px) {
+    input[type="button"] {
+        width: 100%;
+        padding: 15px 25px;
+        font-size: 14px;
+        margin-top: 10px;
+    }
+}
+
 input[type="button"]:disabled {
     background: #cccece;
     color: #888;
@@ -92,11 +145,24 @@ hr {
     margin: 40px auto;
 }
 
+@media (max-width: 480px) {
+    hr {
+        margin: 30px auto;
+    }
+}
+
 h2 {
     font-size: 16px;
     font-weight: 500;
     text-transform: uppercase;
     margin-bottom: 20px;
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
 }
 
 ol {
@@ -117,6 +183,22 @@ ol li {
     color: #042A21;
 }
 
+@media (max-width: 768px) {
+    ol li {
+        font-size: 18px;
+        padding-right: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    ol li {
+        font-size: 16px;
+        padding-right: 0.5em;
+        padding-bottom: 15px;
+        margin-bottom: 12px;
+    }
+}
+
 ol li:not(:last-child)::after {
     content: '';
     position: absolute;
@@ -135,7 +217,20 @@ ol li::before {
   flex-shrink: 0;
 }
 
+@media (max-width: 480px) {
+    ol li::before {
+        margin-right: 15px;
+        font-size: 14px;
+    }
+}
+
 audio {
     width: 100%;
     margin: 0 0 2em;
+}
+
+@media (max-width: 480px) {
+    audio {
+        margin: 0 0 1.5em;
+    }
 }
