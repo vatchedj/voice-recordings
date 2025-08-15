@@ -1,4 +1,4 @@
-(ns voice-recordings.initiate-call
+(ns voice-recordings.pages.initiate-call
   (:require
     [accountant.core :as accountant]
     [cljs-http.client :as http]

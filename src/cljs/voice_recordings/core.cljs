@@ -7,8 +7,8 @@
    [reagent.session :as session]
    [reitit.frontend :as reitit]
    [voice-recordings.common :as common]
-   [voice-recordings.initiate-call :as initiate-call]
-   [voice-recordings.recording :as recording]))
+   [voice-recordings.pages.initiate-call :as initiate-call]
+   [voice-recordings.pages.recording :as recording]))
 
 ;; -------------------------
 ;; Translate routes -> page components

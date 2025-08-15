@@ -1,4 +1,4 @@
-(ns voice-recordings.recording
+(ns voice-recordings.pages.recording
   (:require
     [cljs-http.client :as http]
     [cljs.core.async :refer [<! timeout]]
