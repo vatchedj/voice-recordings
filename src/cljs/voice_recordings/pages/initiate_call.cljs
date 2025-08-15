@@ -43,6 +43,7 @@
                            "/api/initiate-call"
                            {:json-params {:phone-number valid-phone}
                             :headers     {"x-csrf-token" (common/get-anti-forgery-token)}}))]
+        (println "Received response" response)
         (if (= 201 (:status response))
           (let [recording-url (get-in response [:headers "location"])]
             (poll-recording-status! recording-url))

@@ -24,7 +24,7 @@ Contains a file for each page and corresponding logic.
 
 1. Add a new file with in the `src/cljs/voice_recordings/pages` directory or make a copy of an existing page.
 2. Add an entry to `router` within the `src/cljs/voice_recordings/common.cljs` file.
-3. Add an entry to `page-for` within `src/cljs/core.cljs.
+3. Add an entry to `page-for` within `src/cljs/core.cljs`.
 4. Add an entry to `app` in the server-side code located at `src/clj/handler.clj`.
 
 ### Backend

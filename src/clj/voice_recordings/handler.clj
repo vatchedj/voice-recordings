@@ -54,6 +54,8 @@
             subject (db/create-or-get-subject! intl-phone-number)
             call (twilio/make-call! intl-phone-number)
             call-sid (.getSid call)
+            _ (log/info "Received response from Twilio"
+                        {:call-sid call-sid})
             recording (db/create-recording! (:id subject) call-sid)]
         (-> recording
             :uuid
@@ -65,6 +67,8 @@
 
 (defn update-recording-handler
   [request]
+  (log/info "update-recording-handler"
+            request)
   (let [params (-> request :params)
         call-sid (:CallSid params)
         recording-url (:RecordingUrl params)]
