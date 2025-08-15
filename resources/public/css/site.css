@@ -24,7 +24,7 @@ body {
 }
 
 .main {
-    margin: 5% 25% 5%;
+    margin: 5% auto;
     max-width: 800px;
 }
 
